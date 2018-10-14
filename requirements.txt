@@ -1,0 +1,16 @@
+jieba
+wordcloud
+chartkick
+flask
+selenium
+APScheduler
+requests
+peewee
+pymysql
+pillow
+qiniu
+PyExecJS
+websocket-client
+beautifulsoup4
+celery
+redis

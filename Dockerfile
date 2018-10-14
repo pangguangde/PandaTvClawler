@@ -7,4 +7,4 @@ RUN pip install --no-cache-dir -r requirements.txt -i https://pypi.doubanio.com/
 
 COPY . .
 
-CMD ["python", "WebService.py"]
+CMD ["python", "async_insert.py"]

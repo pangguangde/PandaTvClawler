@@ -18,7 +18,7 @@ from flask import Blueprint, Flask, render_template, request
 
 from model import Danmu
 from settings import NODE_PATH
-from utils.common_util import get_common_logger, mysql_db
+from utils.common_util import get_common_logger, mysql_db, create_node_ini
 from utils.redis_util import RedisHelper
 from word_cloud_util import get_b64_pic
 
@@ -127,6 +127,7 @@ def check_room_status_panda():
     scan_ids = ['371037'] + [item['roomid'] for item in targets]
     logger.info(scan_ids)
     for r_id in scan_ids:
+        create_node_ini('panda', r_id)
         r = requests.get('https://www.panda.tv/api_room_v2?roomid={}'.format(r_id))
         d = r.json()
         if d['data']['roominfo']['status'] == '2' and int(d['data']['roominfo']['person_num']) > 500:
@@ -147,15 +148,16 @@ def check_room_status_douyu():
     scan_ids = ['288016', '424559', '252140', '4908245', '5068351', '2040718', '12847', '5067522', '5569952', '5631401', '5569971', '5630739', '5569903', '8733']
     logger.info(scan_ids)
     for r_id in scan_ids:
+        create_node_ini('douyu', r_id)
         r = requests.get('https://www.douyu.com/ztCache/WebM/room/{}'.format(r_id))
         d = r.json()
         room_info = json.loads(d['$ROOM'])
         if room_info['show_status'] == 1:
             if not in_monitoring('douyu', r_id):
-                logger.info('{} 开启监控: {}'.format(r_id.ljust(7), d['data']['hostinfo']['name']))
+                logger.info('{} 开启监控: {}'.format(r_id.ljust(7), room_info['room_name']))
                 rpc_server.supervisor.startProcessGroup('douyu-{}'.format(r_id))
             else:
-                logger.info('{} 正在监控: {}'.format(r_id.ljust(7), d['data']['hostinfo']['name']))
+                logger.info('{} 正在监控: {}'.format(r_id.ljust(7), room_info['room_name']))
         else:
             if in_monitoring('douyu', r_id):
                 rpc_server.supervisor.stopProcessGroup('douyu-{}'.format(r_id))
@@ -168,6 +170,7 @@ def check_room_status_huya():
     scan_ids = ['660000', '666888', '521521']
     logger.info(scan_ids)
     for r_id in scan_ids:
+        create_node_ini('huya', r_id)
         r = requests.get('https://www.huya.com/{}'.format(r_id))
 
         soup = BeautifulSoup(r.text)

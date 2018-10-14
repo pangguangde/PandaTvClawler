@@ -86,12 +86,14 @@ def create_node_ini(site, room_id):
         s = """; 设置进程的名称，使用 supervisorctl 来管理进程时需要使用该进程名
 [program:{site}-{room_id}]
 command=node {site}.js -r {room_id}
-numprocs=2 ; 默认为1
+numprocs=1 ; 默认为1
 process_name=%(program_name)s_%(process_num)02d ; 默认为 %(program_name)s，即 [program:x] 中的 x
 directory={node_path} ; 执行 command 之前，先切换到工作目录
 ; 程序崩溃时自动重启，重启次数是有限制的，默认为3次
 autostart=true
 autorestart=true
+startsecs=3 ;  自动重启间隔 
+startretries=50 ;  当进程启动失败后，最大尝试启动的次数。。当超过3次后，supervisor将把此进程的状态置为FAIL 默认值为3 。。
 redirect_stderr=true ; 重定向输出的日志
 stdout_logfile = {node_path}/logs/{site}/{room_id}.log
 stdout_logfile_maxbytes=50MB
@@ -116,9 +118,9 @@ def correct_exit(sched):
 if __name__ == '__main__':
     # print(get_img_url('/Users/pangguangde/Downloads/IMG_4867.PNG'))
 
-    # create_node_ini('panda', '371037')
-    # create_node_ini('douyu', '288016')
-    # create_node_ini('douyu', '424559')
-    # create_node_ini('huya', '660000')
-    import xmlrpc.client
-    xmlrpc.client.Server('http://:@127.0.0.1:9001/RPC2')
+    create_node_ini('panda', '371037')
+    create_node_ini('douyu', '288016')
+    create_node_ini('douyu', '424559')
+    create_node_ini('huya', '660000')
+    # import xmlrpc.client
+    # xmlrpc.client.Server('http://:@127.0.0.1:9001/RPC2')
